@@ -74,7 +74,7 @@ const updateEvent = async (req, res) => {
 const joinEvent = async (req, res) => {
   try {
     const {
-      body: { eventId },
+      body: { userId },
       params: { id },
     } = req;
 
@@ -82,11 +82,13 @@ const joinEvent = async (req, res) => {
     // event.attendees = [...event.attendees,eventId]
     //    event.save()
 
-    const event = await Event.updateOne(
-      {_id: id},
-      {$push:{attendees: eventId}}
-    )
-    res.status(201).json(events);
+    const event = await Event.findById(id)
+
+    event.attendees = [...event.attendees, userId]
+
+    event.save()
+
+    res.status(201).json(event);
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
